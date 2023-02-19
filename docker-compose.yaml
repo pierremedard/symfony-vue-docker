@@ -1,0 +1,53 @@
+version: "3.8"
+services:
+  db:
+    image: mysql
+    container_name: db_container
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - dev
+
+  php:
+    build: backend
+    container_name: be_container
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend/symfony-api/:/var/www
+      - ./.docker/apache:/etc/apache2/sites-enabled
+    restart: always
+    networks:
+      - dev
+    env_file:
+      - ./backend/symfony-api/.env
+    environment:
+      DATABASE_URL: mysql://root:root@127.0.0.1/api
+    command: sh -c "composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress && \
+                    composer dump-autoload && \
+                    apache2ctl -D FOREGROUND"
+
+  vuejs:
+    build: frontend
+    tty: true
+    container_name: fe_container
+    ports:
+      - "5000:5000"
+    networks:
+      - dev
+    volumes:
+      - ./frontend/vue-project:/var/www
+    env_file:
+      - ./frontend/vue-project/.env
+    command: sh -c "yarn install && yarn run dev --host"
+
+networks:
+    dev:
+
+volumes:
+    db-data:
