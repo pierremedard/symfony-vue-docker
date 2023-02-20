@@ -27,8 +27,8 @@ services:
     env_file:
       - ./backend/symfony-api/.env
     environment:
-      DATABASE_URL: mysql://root:root@127.0.0.1/api
-    command: sh -c "composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress && \
+      DATABASE_URL: mysql://root:root@db_container/api
+    command: sh -c "composer install --prefer-dist --no-autoloader --no-scripts --no-progress && \
                     composer dump-autoload && \
                     apache2ctl -D FOREGROUND"
 
