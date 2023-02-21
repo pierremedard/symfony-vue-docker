@@ -30,6 +30,7 @@ services:
       DATABASE_URL: mysql://root:root@db_container/api
     command: sh -c "composer install --prefer-dist --no-autoloader --no-scripts --no-progress && \
                     composer dump-autoload && \
+                    mkdir -p var && chmod -R 777 var && \
                     apache2ctl -D FOREGROUND"
 
   vuejs:
